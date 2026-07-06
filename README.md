@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # ✨ Google Cloud Code Hosts Fix ✨
 
@@ -20,7 +20,7 @@
 
 This is a tiny Windows utility script that fixes Google Cloud Code / Antigravity account setup issues caused by incorrect local `hosts` entries.
 
-It is useful when you see an error like:
+It is especially useful for cases where Antigravity shows this error while being routed through tools such as **9Router**:
 
 ```txt
 There was an unexpected issue setting up your account
@@ -34,7 +34,7 @@ The script removes any line in the Windows `hosts` file that contains:
 cloudcode-pa.googleapis.com
 ```
 
-If this domain is blocked or mapped to a wrong IP, Google Cloud Code / Antigravity may fail during account setup.
+If this domain is blocked or mapped to a wrong IP, Google Cloud Code / Antigravity may fail during account setup. This can happen after local routing, proxy, or MITM-style debugging setups leave a stale hosts entry behind.
 
 ---
 

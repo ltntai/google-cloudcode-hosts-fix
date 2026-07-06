@@ -1,18 +1,27 @@
 @echo off
 setlocal
 
-title Fix Google Cloud Code Hosts Issue
+title Google Cloud Code Hosts Fix
+color 0B
 
-echo ========================================
-echo   Fix Google Cloud Code Sign-In Issue
-echo ========================================
+echo.
+echo  ================================================================
+echo   ^|                                                              ^|
+echo   ^|        GOOGLE CLOUD CODE / ANTIGRAVITY HOSTS FIX             ^|
+echo   ^|                                                              ^|
+echo  ================================================================
+echo.
+echo   Target : cloudcode-pa.googleapis.com
+echo   Action : remove broken hosts entry + flush DNS
 echo.
 
 :: Check Administrator permission
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    echo This script needs Administrator permission.
-    echo Requesting Administrator access...
+    color 0E
+    echo  [!] Administrator permission is required.
+    echo  [*] Requesting Administrator access...
+    echo.
     powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
     exit /b
 )
@@ -20,7 +29,9 @@ if %errorlevel% neq 0 (
 set "HOSTS_FILE=C:\Windows\System32\drivers\etc\hosts"
 set "TARGET_DOMAIN=cloudcode-pa.googleapis.com"
 
-echo [1/3] Removing entries containing %TARGET_DOMAIN% from hosts...
+echo  [1/3] Cleaning hosts file...
+echo        Removing entries containing: %TARGET_DOMAIN%
+echo.
 
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "$hosts='%HOSTS_FILE%';" ^
@@ -28,35 +39,50 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "$content=Get-Content -Path $hosts -ErrorAction Stop;" ^
   "$filtered=$content | Where-Object { $_ -notmatch [regex]::Escape($domain) };" ^
   "Set-Content -Path $hosts -Value $filtered -Encoding ASCII;" ^
-  "Write-Host '  -> Done'"
+  "Write-Host '       Done.'"
 
 if %errorlevel% neq 0 (
+    color 0C
     echo.
-    echo [ERROR] Failed to update hosts file.
+    echo  [ERROR] Failed to update hosts file.
+    echo          Please run this script as Administrator.
+    echo.
     pause
     exit /b 1
 )
 
 echo.
-echo [2/3] Flushing DNS cache...
+echo  [2/3] Flushing DNS cache...
 ipconfig /flushdns
 
 echo.
-echo [3/3] Checking result...
+echo  [3/3] Verifying result...
 findstr /i "%TARGET_DOMAIN%" "%HOSTS_FILE%" >nul 2>&1
 
 if %errorlevel% equ 0 (
+    color 0C
     echo.
-    echo [ERROR] The hosts file still contains %TARGET_DOMAIN%.
-    echo Please open this file manually and remove that line:
-    echo %HOSTS_FILE%
+    echo  ================================================================
+    echo   FIX FAILED
+    echo  ================================================================
+    echo.
+    echo  The hosts file still contains: %TARGET_DOMAIN%
+    echo.
+    echo  Please open this file manually and remove that line:
+    echo  %HOSTS_FILE%
 ) else (
+    color 0A
     echo.
-    echo [OK] Hosts file is clean.
-    echo Google Cloud Code / Antigravity sign-in should work normally if this was the cause.
+    echo  ================================================================
+    echo   FIX COMPLETED SUCCESSFULLY
+    echo  ================================================================
+    echo.
+    echo  Hosts file is clean.
+    echo  Google Cloud Code / Antigravity sign-in should work normally
+    echo  if the hosts entry was the cause.
 )
 
 echo.
-echo ========================================
-pause
+echo  Press any key to exit...
+pause >nul
 endlocal

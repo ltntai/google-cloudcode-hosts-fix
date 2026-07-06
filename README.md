@@ -1,45 +1,71 @@
-﻿# Google Cloud Code Hosts Fix
+﻿<div align="center">
 
-A small Windows utility script to fix Google Cloud Code / Antigravity sign-in setup issues caused by incorrect local `hosts` entries.
+# ✨ Google Cloud Code Hosts Fix ✨
 
-## What does it fix?
+### 🛠️ One-click Windows helper for Google Cloud Code / Antigravity sign-in setup issues
 
-This script removes any line in the Windows `hosts` file that contains:
+<p>
+  <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white">
+  <img alt="Batch" src="https://img.shields.io/badge/Batch_Script-4D4D4D?style=for-the-badge&logo=gnubash&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge">
+</p>
 
-```txt
-cloudcode-pa.googleapis.com
-```
+> Clean local `hosts` entries, flush DNS, and get Cloud Code sign-in working again.
 
-This can help fix errors like:
+</div>
+
+---
+
+## 🚀 What is this?
+
+This is a tiny Windows utility script that fixes Google Cloud Code / Antigravity account setup issues caused by incorrect local `hosts` entries.
+
+It is useful when you see an error like:
 
 ```txt
 There was an unexpected issue setting up your account
 ```
 
-when Google Cloud Code or Antigravity cannot complete account setup because the domain is blocked or mapped incorrectly in the local `hosts` file.
+## 🎯 What does it fix?
 
-## What does the script do?
+The script removes any line in the Windows `hosts` file that contains:
 
-The script will:
+```txt
+cloudcode-pa.googleapis.com
+```
 
-1. Request Administrator permission.
-2. Open the Windows hosts file:
-   ```txt
-   C:\Windows\System32\drivers\etc\hosts
-   ```
-3. Remove lines containing:
-   ```txt
-   cloudcode-pa.googleapis.com
-   ```
-4. Flush the Windows DNS cache.
-5. Check whether the hosts entry was removed successfully.
+If this domain is blocked or mapped to a wrong IP, Google Cloud Code / Antigravity may fail during account setup.
 
-## Requirements
+---
 
-- Windows
-- Administrator permission
+## ✨ Features
 
-## Usage
+- 🛡️ Automatically requests Administrator permission
+- 🧹 Removes broken `cloudcode-pa.googleapis.com` hosts entries
+- ⚡ Flushes Windows DNS cache
+- ✅ Checks whether the fix was applied successfully
+- 🔒 No API keys, tokens, accounts, or private data required
+- 🌈 Colorful console output for easier reading
+
+---
+
+## 📦 Download
+
+Download the script from this repository:
+
+```txt
+fix-google-cloudcode.bat
+```
+
+Or clone the repo:
+
+```bash
+git clone https://github.com/ltntai/google-cloudcode-hosts-fix.git
+```
+
+---
+
+## 🧭 Usage
 
 1. Download `fix-google-cloudcode.bat`.
 2. Right-click the file.
@@ -47,22 +73,45 @@ The script will:
 4. Wait for the script to finish.
 5. Restart Google Cloud Code / Antigravity if needed.
 
-## Is this tied to my IP, API key, or account?
+---
 
-No.
+## 🧩 What does the script do?
 
-This script does not use:
+| Step | Action |
+| --- | --- |
+| 1 | Requests Administrator permission |
+| 2 | Opens `C:\Windows\System32\drivers\etc\hosts` |
+| 3 | Removes entries containing `cloudcode-pa.googleapis.com` |
+| 4 | Runs `ipconfig /flushdns` |
+| 5 | Verifies that the hosts entry is gone |
 
-- API keys
-- tokens
-- Google account data
-- IP-specific configuration
-- project IDs
-- private credentials
+---
 
-It only modifies the local Windows `hosts` file.
+## 🔐 Is this tied to my IP, API key, or account?
 
-## Safety note
+**No.**
+
+This script does **not** use:
+
+- ❌ API keys
+- ❌ tokens
+- ❌ Google account data
+- ❌ IP-specific configuration
+- ❌ project IDs
+- ❌ private credentials
+
+It only modifies your local Windows `hosts` file.
+
+---
+
+## 🪟 Requirements
+
+- Windows
+- Administrator permission
+
+---
+
+## 🛡️ Safety note
 
 This script only removes entries containing:
 
@@ -70,8 +119,20 @@ This script only removes entries containing:
 cloudcode-pa.googleapis.com
 ```
 
-from the local `hosts` file. It does not install software, download files, or send data anywhere.
+from the local `hosts` file.
 
-## Disclaimer
+It does **not** install software, download files, or send data anywhere.
 
-Use at your own risk. This tool is provided as-is for fixing local DNS/hosts configuration issues.
+---
+
+## ⚠️ Disclaimer
+
+Use at your own risk. This tool is provided as-is for fixing local DNS / hosts configuration issues.
+
+---
+
+<div align="center">
+
+Made with 💙 by [Tấn Tài](https://github.com/ltntai)
+
+</div>

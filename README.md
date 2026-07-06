@@ -82,11 +82,27 @@ git clone https://github.com/ltntai/google-cloudcode-hosts-fix.git
 
 ## 🧭 Usage
 
+### 1. Manual Execution
 1. Download `fix-google-cloudcode.bat`.
 2. Right-click the file.
 3. Choose **Run as administrator**.
 4. Wait for the script to finish.
 5. Restart Google Cloud Code / Antigravity if needed.
+
+### 2. Run Automatically on VS Code Startup
+We have pre-configured a VS Code task in [.vscode/tasks.json](file:///c:/Users/letan/Downloads/Ch2/google-cloudcode-hosts-fix/.vscode/tasks.json). 
+When you open this folder in VS Code:
+- VS Code will prompt you to allow automatic tasks for this folder.
+- Once allowed, the script will automatically run in the background (using the `/silent` flag) whenever the workspace is loaded.
+- *Note: Since the script modifies system files, Windows will still display a UAC prompt asking for permission.*
+
+### 3. Run Automatically on Windows Logon (Recommended, Silent & Hidden)
+To avoid UAC prompts every time you open VS Code, you can register it as a Windows scheduled task:
+1. Right-click `setup-autorun.bat`.
+2. Choose **Run as administrator**.
+3. Press `1` to **Enable Auto Run** and press Enter.
+4. The script will now run completely hidden in the background every time you log in to Windows, ensuring the hosts file is clean without any prompt.
+5. If you ever want to remove it, run `setup-autorun.bat` again and press `2` to **Disable Auto Run**.
 
 ---
 

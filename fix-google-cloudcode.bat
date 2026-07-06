@@ -1,6 +1,13 @@
 @echo off
 setlocal
 
+:: Parse silent/auto argument
+set "SILENT_MODE=0"
+if "%~1"=="/silent" set "SILENT_MODE=1"
+if "%~1"=="--silent" set "SILENT_MODE=1"
+if "%~1"=="/auto" set "SILENT_MODE=1"
+if "%~1"=="--auto" set "SILENT_MODE=1"
+
 title Google Cloud Code Hosts Fix
 color 0B
 
@@ -22,7 +29,7 @@ if %errorlevel% neq 0 (
     echo  [!] Administrator permission is required.
     echo  [*] Requesting Administrator access...
     echo.
-    powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+    powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -ArgumentList '%*' -Verb RunAs"
     exit /b
 )
 
@@ -47,7 +54,7 @@ if %errorlevel% neq 0 (
     echo  [ERROR] Failed to update hosts file.
     echo          Please run this script as Administrator.
     echo.
-    pause
+    if "%SILENT_MODE%" neq "1" pause
     exit /b 1
 )
 
@@ -82,7 +89,9 @@ if %errorlevel% equ 0 (
     echo  if the hosts entry was the cause.
 )
 
-echo.
-echo  Press any key to exit...
-pause >nul
+if "%SILENT_MODE%" neq "1" (
+    echo.
+    echo  Press any key to exit...
+    pause >nul
+)
 endlocal

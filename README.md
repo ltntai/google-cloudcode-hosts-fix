@@ -1,18 +1,19 @@
 <div align="center">
 
-# ✨ Google Cloud Code Hosts Fix ✨
+# ✨ Google Cloud Code Hosts Fix
 
-### 🛠️ Fix Antigravity / Google Cloud Code sign-in error on Windows
+### Route Antigravity / Google Cloud Code through local 9Router on Windows
 
 <p>
   <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white">
   <img alt="Google Cloud Code" src="https://img.shields.io/badge/Google_Cloud_Code-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white">
   <img alt="Antigravity" src="https://img.shields.io/badge/Antigravity-7c3aed?style=for-the-badge&logo=googlegemini&logoColor=white">
+  <img alt="9Router" src="https://img.shields.io/badge/9Router-localhost-111827?style=for-the-badge">
   <img alt="Batch" src="https://img.shields.io/badge/Batch_Script-4D4D4D?style=for-the-badge&logo=gnubash&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge">
 </p>
 
-> Windows `.bat` tool to fix `There was an unexpected issue setting up your account` by cleaning broken Google Cloud Code hosts entries and flushing DNS.
+**A small Windows helper for fixing Antigravity / Google Cloud Code sign-in or account setup issues when using local 9Router routing.**
 
 </div>
 
@@ -20,34 +21,119 @@
 
 ## 🚀 What is this?
 
-**Google Cloud Code Hosts Fix** is a small Windows batch script for fixing **Antigravity sign-in**, **Google Cloud Code account setup**, and **9Router routing** issues caused by stale or incorrect local `hosts` entries.
+**Google Cloud Code Hosts Fix** is a lightweight Windows batch-script toolkit that routes Google Cloud Code traffic used by **Antigravity IDE** through a local **9Router** listener.
 
-It is especially useful for cases where Antigravity shows this error while being routed through tools such as **9Router**:
+It helps when Antigravity / Google Cloud Code shows errors like:
 
 ```txt
 There was an unexpected issue setting up your account
 ```
 
-## 🎯 What does it fix?
+or when Cloud Code traffic is not being routed through 9Router because the Windows `hosts` file is missing the required localhost mappings.
 
-The script removes any line in the Windows `hosts` file that contains:
+---
+
+## 🎯 What does it do?
+
+The main script updates:
 
 ```txt
-cloudcode-pa.googleapis.com
+C:\Windows\System32\drivers\etc\hosts
 ```
 
-If this domain is blocked or mapped to a wrong IP, Google Cloud Code / Antigravity may fail during account setup. This can happen after local routing, proxy, or MITM-style debugging setups leave a stale hosts entry behind.
+It removes old entries for these Cloud Code domains and then writes clean localhost routes:
+
+```txt
+127.0.0.1 cloudcode-pa.googleapis.com
+127.0.0.1 daily-cloudcode-pa.googleapis.com
+::1 cloudcode-pa.googleapis.com
+::1 daily-cloudcode-pa.googleapis.com
+```
+
+After that, it flushes the Windows DNS cache and verifies that all required routes exist.
+
+> [!IMPORTANT]
+> 9Router should be running locally before you open Antigravity. The script checks whether port `443` has a local listener and warns you if it does not.
 
 ---
 
 ## ✨ Features
 
-- 🛡️ Automatically requests Administrator permission
-- 🧹 Removes broken `cloudcode-pa.googleapis.com` hosts entries
+- 🛡️ Requests Administrator permission automatically when needed
+- 🧹 Removes stale Cloud Code hosts entries before writing new ones
+- 🔁 Adds both `cloudcode-pa.googleapis.com` and `daily-cloudcode-pa.googleapis.com`
+- 🌐 Supports IPv4 `127.0.0.1` and IPv6 `::1`
 - ⚡ Flushes Windows DNS cache
-- ✅ Checks whether the fix was applied successfully
-- 🔒 No API keys, tokens, accounts, or private data required
-- 🌈 Colorful console output for easier reading
+- ✅ Verifies all required routes after writing
+- 🚀 Includes a launcher that restarts Antigravity after applying the route
+- ⏰ Optional Windows logon autorun through Task Scheduler
+- 🔒 No API keys, tokens, Google accounts, or private credentials required
+
+---
+
+## 📁 Files
+
+| File | Purpose |
+| --- | --- |
+| `fix-google-cloudcode.bat` | Main script. Applies localhost routes and flushes DNS. |
+| `start-antigravity-9router.bat` | Closes Antigravity, applies the route, checks port `443`, then starts Antigravity again. |
+| `setup-autorun.bat` | Enables or disables a Windows Scheduled Task that applies the route on login. |
+| `.vscode/tasks.json` | Optional VS Code task that can run the fix on folder open. |
+| `LICENSE` | MIT license. |
+
+---
+
+## 🧭 Usage
+
+### Option 1: Apply the route manually
+
+1. Start 9Router.
+2. Right-click `fix-google-cloudcode.bat`.
+3. Choose **Run as administrator**.
+4. Wait for the hosts update, DNS flush, and verification to finish.
+5. Fully close and reopen Antigravity if needed.
+
+### Option 2: Start Antigravity with the 9Router route
+
+Use this if you want the full flow in one click:
+
+```txt
+start-antigravity-9router.bat
+```
+
+It will:
+
+1. Request Administrator permission.
+2. Close Antigravity and its language server process.
+3. Run `fix-google-cloudcode.bat /silent`.
+4. Check whether a local HTTPS listener exists on port `443`.
+5. Start Antigravity again.
+
+### Option 3: Run automatically on Windows login
+
+Use this if you want the route to be applied every time you sign in:
+
+1. Right-click `setup-autorun.bat`.
+2. Choose **Run as administrator**.
+3. Press `1` to enable autorun.
+4. A Scheduled Task named `FixGoogleCloudCodeHosts` will be created.
+5. The task runs about 20 seconds after Windows login.
+
+To disable autorun, run `setup-autorun.bat` again and press `2`.
+
+---
+
+## 🧩 How the main script works
+
+| Step | Action |
+| --- | --- |
+| 1 | Checks Administrator permission |
+| 2 | Warns if no local listener is found on port `443` |
+| 3 | Reads the Windows `hosts` file |
+| 4 | Removes old entries for the target Cloud Code domains |
+| 5 | Adds fresh IPv4 and IPv6 localhost routes |
+| 6 | Runs `ipconfig /flushdns` |
+| 7 | Verifies that all required routes are present |
 
 ---
 
@@ -58,80 +144,29 @@ This project may help if you are searching for:
 - `Antigravity there was an unexpected issue setting up your account`
 - `Google Cloud Code sign in error Windows`
 - `Google Cloud Code account setup error`
-- `cloudcode-pa.googleapis.com hosts file fix`
+- `Google Cloud Code 9Router fix`
+- `cloudcode-pa.googleapis.com hosts file`
+- `daily-cloudcode-pa.googleapis.com hosts file`
+- `Windows hosts file DNS fix`
 - `9Router Antigravity setup issue`
-- `Windows hosts file DNS fix for Google Cloud Code`
 
 ---
 
-## 📦 Download
+## 🔐 Privacy and safety
 
-Download the script from this repository:
-
-```txt
-fix-google-cloudcode.bat
-```
-
-Or clone the repo:
-
-```bash
-git clone https://github.com/ltntai/google-cloudcode-hosts-fix.git
-```
-
----
-
-## 🧭 Usage
-
-### 1. Manual Execution
-1. Download `fix-google-cloudcode.bat`.
-2. Right-click the file.
-3. Choose **Run as administrator**.
-4. Wait for the script to finish.
-5. Restart Google Cloud Code / Antigravity if needed.
-
-### 2. Run Automatically on VS Code Startup
-We have pre-configured a VS Code task in [.vscode/tasks.json](file:///c:/Users/letan/Downloads/Ch2/google-cloudcode-hosts-fix/.vscode/tasks.json). 
-When you open this folder in VS Code:
-- VS Code will prompt you to allow automatic tasks for this folder.
-- Once allowed, the script will automatically run in the background (using the `/silent` flag) whenever the workspace is loaded.
-- *Note: Since the script modifies system files, Windows will still display a UAC prompt asking for permission.*
-
-### 3. Run Automatically on Windows Logon (Recommended, Silent & Hidden)
-To avoid UAC prompts every time you open VS Code, you can register it as a Windows scheduled task:
-1. Right-click `setup-autorun.bat`.
-2. Choose **Run as administrator**.
-3. Press `1` to **Enable Auto Run** and press Enter.
-4. The script will now run completely hidden in the background every time you log in to Windows, ensuring the hosts file is clean without any prompt.
-5. If you ever want to remove it, run `setup-autorun.bat` again and press `2` to **Disable Auto Run**.
-
----
-
-## 🧩 What does the script do?
-
-| Step | Action |
-| --- | --- |
-| 1 | Requests Administrator permission |
-| 2 | Opens `C:\Windows\System32\drivers\etc\hosts` |
-| 3 | Removes entries containing `cloudcode-pa.googleapis.com` |
-| 4 | Runs `ipconfig /flushdns` |
-| 5 | Verifies that the hosts entry is gone |
-
----
-
-## 🔐 Is this tied to my IP, API key, or account?
-
-**No.**
-
-This script does **not** use:
+This project does **not** use or collect:
 
 - ❌ API keys
 - ❌ tokens
 - ❌ Google account data
-- ❌ IP-specific configuration
 - ❌ project IDs
 - ❌ private credentials
+- ❌ network upload/download logic
 
-It only modifies your local Windows `hosts` file.
+It only modifies selected lines in your local Windows `hosts` file and flushes the local DNS cache.
+
+> [!WARNING]
+> This tool intentionally changes DNS resolution for the listed Google Cloud Code domains on your machine. Only use it if you understand that those domains will point to your local 9Router listener.
 
 ---
 
@@ -139,26 +174,14 @@ It only modifies your local Windows `hosts` file.
 
 - Windows
 - Administrator permission
-
----
-
-## 🛡️ Safety note
-
-This script only removes entries containing:
-
-```txt
-cloudcode-pa.googleapis.com
-```
-
-from the local `hosts` file.
-
-It does **not** install software, download files, or send data anywhere.
+- Local 9Router listener, usually on port `443`
+- Antigravity IDE / Google Cloud Code
 
 ---
 
 ## ⚠️ Disclaimer
 
-Use at your own risk. This tool is provided as-is for fixing local DNS / hosts configuration issues.
+Use at your own risk. This tool is provided as-is for local DNS / hosts configuration when routing Antigravity or Google Cloud Code through 9Router.
 
 ---
 

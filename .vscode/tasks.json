@@ -2,17 +2,18 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Auto Fix Google Cloud Code Hosts",
+      "label": "Fix Google Cloud Code Hosts",
       "type": "shell",
       "command": "${workspaceFolder}/fix-google-cloudcode.bat",
       "args": ["/silent"],
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
+      "problemMatcher": [],
       "presentation": {
         "reveal": "silent",
         "panel": "shared",
         "focus": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
       }
     }
   ]
